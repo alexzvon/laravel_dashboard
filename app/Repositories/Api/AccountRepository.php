@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace App\Repositories\Api;
 
-use App\Http\Requests\User\CreateUserRequest;
+use App\Http\Requests\Account\CreateAccountRequest;
 use App\Repositories\CoreRepository;
 use App\Models\User as Model;
 use Illuminate\Support\Collection;
 
-class UserRepository extends CoreRepository
+class AccountRepository extends CoreRepository
 {
     private array $notUpdateFields = [
         'confirm_password',
@@ -30,14 +30,13 @@ class UserRepository extends CoreRepository
     }
 
     /**
-     * @param CreateUserRequest $request
+     * @param CreateAccountRequest $request
      * @return Model|array
      */
-    public function createUser(CreateUserRequest  $request): Model | array
+    public function createAccount(CreateAccountRequest $request): Model | array
     {
         try {
             return $this->startConditions()->create([
-                'name' => $request->name,
                 'email' => $request->email,
                 'password' => $request->password,
             ]);
@@ -52,7 +51,7 @@ class UserRepository extends CoreRepository
      * @param int $id
      * @return Model
      */
-    public function getUser(int $id): Model
+    public function getAccount(int $id): Model
     {
         return $this->startConditions()->find($id);
     }
@@ -60,7 +59,7 @@ class UserRepository extends CoreRepository
     /**
      * @return Collection
      */
-    public function getUsersList(): Collection
+    public function getAccountList(): Collection
     {
         return $this->startConditions()->all();
     }
@@ -69,7 +68,7 @@ class UserRepository extends CoreRepository
      * @param int $id
      * @return int|array
      */
-    public function deleteUser(int $id): int | array
+    public function deleteAccount(int $id): int|array
     {
         try {
 
@@ -82,18 +81,18 @@ class UserRepository extends CoreRepository
         }
     }
 
-    public function updateUser($request): Model | array
+    public function updateAccount($request): Model|array
     {
         $updateFields = [];
 
-        foreach ($request->all() as $key=>$value) {
+        foreach ($request->all() as $key => $value) {
             if (!in_array($key, $this->notUpdateFields) && !is_null($value)) {
                 $updateFields[$key] = $value;
             }
         }
 
         try {
-            $user = $this->getUser($request->id);
+            $user = $this->getAccount($request->id);
 
             if ($user->update($updateFields)) {
                 return $user;

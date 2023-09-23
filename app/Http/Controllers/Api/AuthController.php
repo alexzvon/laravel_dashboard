@@ -25,6 +25,7 @@ class AuthController extends Controller
         if (auth()->attempt($credentials)) {
             $user = Auth::user();
             $user['token'] = $user->createToken('Laravelia')->accessToken;
+
             return response()->json([
                 'user' => $user
             ], 200);

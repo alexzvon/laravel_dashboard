@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->BigInteger('id_person')->nullable();
-            $table->string('phone')->unique()->nullable();
             $table->enum('role', config('enums.roles'))->default('client');
             $table->boolean('is_active')->default(true);
+
+            $table->dropColumn('name');
         });
     }
 
@@ -26,7 +27,6 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             $table->dropColumn('id_person');
-            $table->dropColumn('phone');
             $table->dropColumn('role');
             $table->dropColumn('is_active');
         });

@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\API\PersonController;
 use Illuminate\Support\Facades\Route;
 
@@ -29,12 +29,12 @@ Route::get('/probably', function(){
 //Route::post('/login', [LoginController::class, 'authenticate']);
 //Route::middleware('auth:api')->get('/users/list', [UserController::class, 'getUsersList']);
 
-Route::controller(UserController::class)->group(function () {
-    Route::get('/users/list', 'getUsersList');
-    Route::post('/user/create', 'createUser');
-    Route::get('/user/get/{id}', 'getUser');
-    Route::delete('/user/delete/{id}', 'deleteUser');
-    Route::put('/user/update', 'updateUser');
+Route::controller(AccountController::class)->group(function () {
+    Route::get('/account/list', 'getAccountList');
+    Route::post('/account/create', 'createAccount');
+    Route::get('/account/get/{id}', 'getAccount');
+    Route::delete('/account/delete/{id}', 'deleteAccount');
+    Route::put('/account/update', 'updateAccount');
 });
 
 Route::get('/role/list', function() {

@@ -16,6 +16,9 @@ return new class extends Migration
             $table->string('fio');
             $table->enum('sex', config('enums.sex'))->nullable();
             $table->timestamp('birthday')->nullable();
+            $table->string('phone')->unique()->nullable();
+            $table->timestamp('phone_verified_at')->nullable();
+            $table->string('avatar')->nullable();
             $table->text('address')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
