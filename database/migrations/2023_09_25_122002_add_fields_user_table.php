@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->BigInteger('id_person')->nullable();
+            $table->BigInteger('person_id');
             $table->enum('role', config('enums.roles'))->default('client');
             $table->boolean('is_active')->default(true);
 
-            $table->dropColumn('name');
+            $table->foreign('person_id')->references('id')->on('person');
         });
     }
 
@@ -26,7 +26,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('users', function (Blueprint $table) {
-            $table->dropColumn('id_person');
+            $table->dropColumn('person_id');
             $table->dropColumn('role');
             $table->dropColumn('is_active');
         });

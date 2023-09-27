@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
@@ -20,7 +21,18 @@ class User extends Authenticatable
         'email',
         'is_active',
         'role',
+        'person_id',
         'password',
+    ];
+
+    /**
+     * The attributes
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'role' => 'client',
+        'is_active' => true,
     ];
 
     /**
@@ -42,4 +54,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * @return HasOne
+     */
+    public function person(): HasOne
+    {
+        return $this->hasOne(Person::class, 'id', 'person_id');
+    }
 }

@@ -7,15 +7,11 @@ use App\Http\Requests\Account\CreateAccountRequest;
 use App\Repositories\CoreRepository;
 use App\Models\User as Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 
 class AccountRepository extends CoreRepository
 {
-    private array $notUpdateFields = [
-        'confirm_password',
-        'created_at',
-        'updated_at',
-    ];
-
     public function __construct()
     {
         parent::__construct();
@@ -33,35 +29,47 @@ class AccountRepository extends CoreRepository
      * @param CreateAccountRequest $request
      * @return Model|array
      */
-    public function createAccount(CreateAccountRequest $request): Model | array
+    public function createAccount(CreateAccountRequest $request): Model|array
     {
+        $result = null;
+
         try {
-            return $this->startConditions()->create([
+            DB::beginTransaction();
+            $result = $this->startConditions()->create([
+                'person_id' => $request->person_id,
                 'email' => $request->email,
                 'password' => $request->password,
             ]);
+            DB::commit();
         } catch (\Exception $e) {
-            return [
+            DB::rollBack();
+            $result = [
                 'error' => $e->getMessage(),
             ];
         }
+
+        return $result;
     }
 
     /**
      * @param int $id
-     * @return Model
+     * @return Collection
      */
-    public function getAccount(int $id): Model
+    public function getAccount(int $id): Collection
     {
-        return $this->startConditions()->find($id);
+        return $this->startConditions()->with(['person'])->where('id', $id)->get();
     }
 
     /**
+     * @param int $idPerson
      * @return Collection
      */
-    public function getAccountList(): Collection
+    public function getAccountList(int $idPerson): Collection
     {
-        return $this->startConditions()->all();
+        return $this->startConditions()
+            ->where('person_id',$idPerson)
+            ->orderBy('id', 'asc')
+            ->get();
     }
 
     /**
@@ -70,41 +78,53 @@ class AccountRepository extends CoreRepository
      */
     public function deleteAccount(int $id): int|array
     {
+        $result = null;
+
         try {
-
-            return $this->startConditions()->destroy($id);
-
-        } catch (\Exception $exception) {
+            DB::beginTransaction();
+            $result = $this->startConditions()->destroy($id);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
             return [
-                'error' => $exception->getMessage(),
+                'error' => $e->getMessage(),
             ];
         }
+
+        return $result;
     }
 
-    public function updateAccount($request): Model|array
+    /**
+     * @param $request
+     * @return Model|array
+     */
+    public function updateAccount($request): int|array
     {
-        $updateFields = [];
-
-        foreach ($request->all() as $key => $value) {
-            if (!in_array($key, $this->notUpdateFields) && !is_null($value)) {
-                $updateFields[$key] = $value;
-            }
-        }
+        $result = null;
 
         try {
-            $user = $this->getAccount($request->id);
+            $updateFields = [
+                'email' => $request->email,
+                'role' => $request->role,
+                'is_active' => $request->is_active
+            ];
 
-            if ($user->update($updateFields)) {
-                return $user;
+            if ($request->password) {
+                $updateFields['password'] = Hash::make($request->password);
             }
 
-            return [
-                'error' => 'error update user',
-            ];
-        } catch (\Exception $exception) {
-            return [
-                'error' => $exception->getMessage(),
+            DB::beginTransaction();
+            $result = $this->startConditions()
+                ->whereId($request->id)
+                ->update($updateFields);
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+            $result = [
+                'error' => $e->getMessage(),
             ];
         }
+
+        return $result;
     }
 }

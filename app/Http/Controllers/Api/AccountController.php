@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Requests\Account\CreateAccountRequest;
 use App\Http\Requests\Account\UpdateAccountRequest;
-//use App\Http\Resources\AccountCollection;
 use App\Http\Resources\AccountCollection;
 use App\Http\Resources\AccountResource;
 use Illuminate\Http\JsonResponse;
@@ -38,42 +37,50 @@ class AccountController extends Controller
 
     /**
      * @param int $id
-     * @return AccountResource
+     * @return AccountCollection
      */
-    public function getAccount(int $id): AccountResource
+    public function getAccount(int $id): AccountCollection
     {
-        return AccountResource::make($this->accountRepository->getAccount($id));
+        return AccountCollection::make($this->accountRepository->getAccount($id));
     }
 
     /**
+     * @param int $idPerson
      * @return AnonymousResourceCollection
      */
-    public function getAccountList(): AnonymousResourceCollection
+    public function getAccountList(int $idPerson): AnonymousResourceCollection
     {
-        return AccountResource::collection($this->accountRepository->getAccountList());
+        return AccountResource::collection($this->accountRepository->getAccountList($idPerson));
     }
 
     /**
      * @param int $id
      * @return JsonResponse
      */
-    public function deleteUser(int $id): JsonResponse
+    public function deleteAccount(int $id): JsonResponse
     {
-        $result = $this->accountRepository->deleteUser($id);
-
-        if (is_array($result)) {
-            return response()->json($result, 422);
-        } else {
-            return response()->json(['success' => $result], 200);
-        }
+        return $this->returnJsonResponse($this->accountRepository->deleteAccount($id));
     }
 
     /**
      * @param UpdateAccountRequest $request
-     * @return AccountResource
+     * @return JsonResponse
      */
-    public function updateUser(UpdateAccountRequest $request): AccountResource
+    public function updateAccount(UpdateAccountRequest $request): JsonResponse
     {
-        return AccountResource::make($this->accountRepository->updateUser($request));
+        return $this->returnJsonResponse($this->accountRepository->updateAccount($request));
+    }
+
+    /**
+     * @param $result
+     * @return JsonResponse
+     */
+    private function returnJsonResponse($result): JsonResponse
+    {
+        if (is_array($result)) {
+            return response()->json($result, 422);
+        } else {
+            return response()->json(['success' => $result, 200]);
+        }
     }
 }

@@ -2,7 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AccountController;
-use App\Http\Controllers\API\PersonController;
+use App\Http\Controllers\Api\PersonController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -30,7 +30,7 @@ Route::get('/probably', function(){
 //Route::middleware('auth:api')->get('/users/list', [UserController::class, 'getUsersList']);
 
 Route::controller(AccountController::class)->group(function () {
-    Route::get('/account/list', 'getAccountList');
+    Route::get('/account/list/person/{idPerson}', 'getAccountList');
     Route::post('/account/create', 'createAccount');
     Route::get('/account/get/{id}', 'getAccount');
     Route::delete('/account/delete/{id}', 'deleteAccount');
@@ -43,4 +43,8 @@ Route::get('/role/list', function() {
 
 Route::controller(PersonController::class)->group(function () {
     Route::post('/person/create', 'createPerson');
+    Route::get('/person/list', 'getPersonsList');
+    Route::get('/person/get/{id}', 'getPerson');
+    Route::put('/person/update', 'updatePerson');
+    Route::delete('/person/delete/{id}', 'deletePerson');
 });

@@ -23,7 +23,7 @@ class CreatePersonRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'fio' => 'required',
+            'fio' => 'required|string|max:255',
         ];
     }
 }

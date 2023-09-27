@@ -9,6 +9,8 @@ class Person extends Model
 {
     use HasFactory;
 
+    protected $table = 'person';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -18,6 +20,7 @@ class Person extends Model
         'fio',
         'sex',
         'birthday',
+        'phone',
         'address',
         'description',
     ];
