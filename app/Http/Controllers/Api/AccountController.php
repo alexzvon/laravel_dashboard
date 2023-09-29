@@ -8,10 +8,9 @@ use App\Http\Resources\AccountCollection;
 use App\Http\Resources\AccountResource;
 use Illuminate\Http\JsonResponse;
 use \Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use App\Http\Controllers\Controller;
 use App\Repositories\Api\AccountRepository;
 
-class AccountController extends Controller
+class AccountController extends ApiBaseController
 {
     private AccountRepository $accountRepository;
 
@@ -71,16 +70,16 @@ class AccountController extends Controller
         return $this->returnJsonResponse($this->accountRepository->updateAccount($request));
     }
 
-    /**
-     * @param $result
-     * @return JsonResponse
-     */
-    private function returnJsonResponse($result): JsonResponse
-    {
-        if (is_array($result)) {
-            return response()->json($result, 422);
-        } else {
-            return response()->json(['success' => $result, 200]);
-        }
-    }
+//    /**
+//     * @param $result
+//     * @return JsonResponse
+//     */
+//    private function returnJsonResponse($result): JsonResponse
+//    {
+//        if (is_array($result)) {
+//            return response()->json($result, 422);
+//        } else {
+//            return response()->json(['success' => $result, 200]);
+//        }
+//    }
 }

@@ -2,17 +2,15 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
 use App\Http\Requests\Person\CreatePersonRequest;
 use App\Http\Requests\Person\UpdatePersonRequest;
 use App\Http\Resources\PersonResource;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 use App\Repositories\Api\PersonRepository;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
-class PersonController extends Controller
+class PersonController extends ApiBaseController
 {
     private PersonRepository $personRepository;
 
@@ -67,16 +65,16 @@ class PersonController extends Controller
         return $this->returnJsonResponse($this->personRepository->deletePerson($id));
     }
 
-    /**
-     * @param $result
-     * @return JsonResponse
-     */
-    private function returnJsonResponse($result): JsonResponse
-    {
-        if (is_array($result)) {
-            return response()->json($result, 422);
-        } else {
-            return response()->json(['success' => $result, 200]);
-        }
-    }
+//    /**
+//     * @param $result
+//     * @return JsonResponse
+//     */
+//    private function returnJsonResponse($result): JsonResponse
+//    {
+//        if (is_array($result)) {
+//            return response()->json($result, 422);
+//        } else {
+//            return response()->json(['success' => $result, 200]);
+//        }
+//    }
 }

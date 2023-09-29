@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AccountController;
 use App\Http\Controllers\Api\PersonController;
+use App\Http\Controllers\Api\Additionally\PrivacyPolicyController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -47,4 +48,9 @@ Route::controller(PersonController::class)->group(function () {
     Route::get('/person/get/{id}', 'getPerson');
     Route::put('/person/update', 'updatePerson');
     Route::delete('/person/delete/{id}', 'deletePerson');
+});
+
+Route::controller(PrivacyPolicyController::class)->group(function() {
+    Route::get('/privacy-policy', 'getPrivacyPolicy');
+    Route::post('/privacy-policy/save', 'savePrivacyPolicy');
 });
