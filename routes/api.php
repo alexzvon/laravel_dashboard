@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AccountController;
+use App\Http\Controllers\Api\Catalog\CatalogController;
 use App\Http\Controllers\Api\PersonController;
 use App\Http\Controllers\Api\Additionally\PrivacyPolicyController;
 use Illuminate\Support\Facades\Route;
@@ -54,3 +55,12 @@ Route::controller(PrivacyPolicyController::class)->group(function() {
     Route::get('/privacy-policy', 'getPrivacyPolicy');
     Route::post('/privacy-policy/save', 'savePrivacyPolicy');
 });
+
+Route::controller(CatalogController::class)->group(function() {
+    Route::post('node/catalog/create', 'createNodeCatalog');
+    Route::get('node/catalog/get/{id}', 'getNodeCatalog');
+    Route::post('nodes/catalog/get', 'getNodesCatalog');
+    Route::delete('node/catalog/delete', 'deleteNodeCatalog');
+});
+
+
