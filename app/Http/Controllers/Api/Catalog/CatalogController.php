@@ -5,8 +5,10 @@ namespace App\Http\Controllers\Api\Catalog;
 use App\Http\Controllers\Api\ApiBaseController;
 use App\Http\Requests\Catalog\CreateNodeCatalogRequest;
 use App\Http\Requests\Catalog\GetNodesCatalogRequest;
+use App\Http\Requests\Catalog\SetNodeCatalogRequest;
 use App\Http\Resources\Catalog\NodeCatalogResource;
 use App\Http\Resources\Catalog\NodesCatalogCollection;
+use App\Jobs\CountSectionCatalogJob;
 use App\Repositories\Api\Catalog\CatalogRepository;
 use Illuminate\Http\JsonResponse;
 
@@ -24,6 +26,8 @@ class CatalogController extends ApiBaseController
      */
     public function createNodeCatalog(CreateNodeCatalogRequest $request): JsonResponse
     {
+        CountSectionCatalogJob::dispatchAfterResponse();
+
         return $this->returnJsonResponse($this->catalogRepository->createNodeCatalog($request));
     }
     /**
@@ -55,11 +59,21 @@ class CatalogController extends ApiBaseController
         }
     }
     /**
+     * @param SetNodeCatalogRequest $request
+     * @return JsonResponse
+     */
+    public function setNodeCatalog(SetNodeCatalogRequest $request): JsonResponse
+    {
+        return $this->returnJsonResponse($this->catalogRepository->setNodeCatalog($request));
+    }
+    /**
      * @param GetNodesCatalogRequest $request
      * @return JsonResponse
      */
     public function deleteNodeCatalog(GetNodesCatalogRequest $request): JsonResponse
     {
+        CountSectionCatalogJob::dispatchAfterResponse();
+
         return $this->returnJsonResponse($this->catalogRepository->deleteNodeCatalog($request));
     }
 }

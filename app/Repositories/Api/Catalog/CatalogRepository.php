@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\DB;
 
 class CatalogRepository extends CoreRepository
 {
+    private array $arrCount = [];
+
     public function __construct()
     {
         parent::__construct();
@@ -30,10 +32,13 @@ class CatalogRepository extends CoreRepository
 
         try {
             DB::beginTransaction();
+
             $result = $this->startConditions()->create($request->all());
+
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
+
             $result = [
                 'error' => $e->getMessage(),
             ];
@@ -78,7 +83,6 @@ class CatalogRepository extends CoreRepository
 
         return $result;
     }
-
     /**
      * @param $id
      * @return Model|array
@@ -97,7 +101,40 @@ class CatalogRepository extends CoreRepository
 
         return $result;
     }
+    /**
+     * @param $request
+     * @return int|array
+     */
+    public function setNodeCatalog($request): int | array
+    {
+        $result = [];
 
+        try {
+            DB::beginTransaction();
+
+            $setFields = [
+                'section' => $request->section,
+                'name' => $request->name,
+                'image' => $request->image ?? '',
+                'icon' => $request->icon ?? '',
+                'sort' => $request->sort,
+            ];
+
+            $result = $this->startConditions()
+                    ->whereId($request->id)
+                    ->update($setFields);
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            $result = [
+                'error' => $e->getMessage()
+            ];
+        }
+
+        return $result;
+    }
     /**
      * @param $request
      * @return int|array
@@ -120,7 +157,46 @@ class CatalogRepository extends CoreRepository
             DB::commit();
         } catch (\Exception $e) {
             DB::rollBack();
-            return [
+
+            $result = [
+                'error' => $e->getMessage(),
+            ];
+        }
+
+        return $result;
+    }
+    /**
+     * @return array
+     */
+    public function getArrSection(): array
+    {
+        return $this->startConditions()
+            ->select(['id', 'parent_id', 'level'])
+            ->get()
+            ->toArray();
+    }
+    /**
+     * @param array $countIndex
+     * @return int|array
+     */
+    public function setArrSection(array $countIndex): int|array
+    {
+        $result = 0;
+
+        try {
+            DB::beginTransaction();
+
+            foreach ($countIndex as $id => $item) {
+                $result += $this->startConditions()
+                    ->whereId($id)
+                    ->update(['count_sections' => $item['count']]);
+            }
+
+            DB::commit();
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            $result = [
                 'error' => $e->getMessage(),
             ];
         }
